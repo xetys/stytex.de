@@ -4,10 +4,10 @@ require "stringex"
 
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
-ssh_user       = "user@domain.com"
-ssh_port       = "22"
-document_root  = "~/website.com/"
-rsync_delete   = false
+ssh_user       = "stytex"
+ssh_port = "19348"
+document_root  = "~/octopress/"
+rsync_delete   = true
 rsync_args     = ""  # Any extra arguments to pass to rsync
 deploy_default = "rsync"
 
@@ -245,7 +245,8 @@ task :rsync do
     exclude = "--exclude-from '#{File.expand_path('./rsync-exclude')}'"
   end
   puts "## Deploying website via Rsync"
-  ok_failed system("rsync -avze 'ssh -p #{ssh_port}' #{exclude} #{rsync_args} #{"--delete" unless rsync_delete == false} #{public_dir}/ #{ssh_user}:#{document_root}")
+  ok_failed system("rsync -avze 'ssh ' #{exclude} #{rsync_args} #{"--delete" unless rsync_delete == false} #{public_dir}/ #{ssh_user}:#{document_root}")
+ # ok_failed system("rsync -avze 'ssh -p #{ssh_port}' #{exclude} #{rsync_args} #{"--delete" unless rsync_delete == false} #{public_dir}/ #{ssh_user}:#{document_root}")
 end
 
 desc "deploy public directory to github pages"

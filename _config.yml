@@ -2,10 +2,10 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: blog.stytex.de
+title: stytex Blog
+subtitle: topics all around development, DevOps and more
+author: David Steiman (aka. xetys)
 simple_search: https://www.google.com/search
 description:
 
@@ -64,13 +64,13 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user:
-github_repo_count: 0
+github_user: xetys
+github_repo_count: 4
 github_show_profile_link: true
 github_skip_forks: true
 
 # Twitter
-twitter_user:
+twitter_user: xetys
 twitter_tweet_button: true
 
 # Google +1
