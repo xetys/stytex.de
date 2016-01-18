@@ -4,7 +4,7 @@ require "stringex"
 
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
-ssh_user       = "stytex"
+ssh_user       = "stx"
 ssh_port = "19348"
 document_root  = "~/octopress/"
 rsync_delete   = true
