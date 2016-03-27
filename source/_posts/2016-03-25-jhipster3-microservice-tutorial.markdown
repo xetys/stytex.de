@@ -14,11 +14,11 @@ The subtopics today are:
 
  1. scaffolding a microservice architecture with JHipster 3.0 
  2. communication between services with decentralized load balancing (Ribbon) and optional circuit switching (Hystrix)
- 3. (next article) applying the full power of OAuth2 client credential grant to apply fine-grained securing (with possible use cases for this)
+ 3. (maybe in next article) applying the full power of OAuth2 client credential grant to apply fine-grained securing (with possible use cases for this)
 
 ## Part 1: Scaffolding a microservice application using JHipster
 
-For those who don't know: [JHipster](https://jhipster.github.io) is a great project for creating awesome applications with Spring, Spring Cloud OSS and more tools for backend, as well as AngularJS, Bower and Gulp on the frontend. Basicly it is a set of yeoman generators, providing creation and modification of a standard setup of all these tools and wiring them up in a working project. It would take long to list all things inside the box of JHipster, so I follow directly to making the hands dirty :)
+For those who didn't know: [JHipster](https://jhipster.github.io) is a great project for creating awesome applications with Spring, Spring Cloud OSS and more tools for backend, as well as AngularJS, Bower and Gulp on the frontend. Basicly it is a set of yeoman generators, providing creation and modification of a standard setup width all these tools wired up in a working project. It would take to long to list all things inside the box of JHipster, so I follow directly to making our hands dirty :)
 
 Prepare your system with all the tools mentioned in the [Installation Guide](https://jhipster.github.io/installation/) from JHipster. In short you will need a JDK, npm, docker and gradle working.
 
@@ -43,9 +43,9 @@ $ cd foo-service
 $ yo jhipster
 ```
 
-The generator will ask you for a lot of things, but this is how we answer: We want a *microservice application* on port *8081*with any *SQL* based Database, *no Cache* (don't make things harder then needed, we just start off :), we want *gradle building*!
+The generator will ask you for a lot of things, but this is how we answer: We want a *microservice application* on port *8081* with any *SQL* based Database, *no Cache* (don't make things harder then needed, we just start off :D ), we want *gradle building*!
 
-Remember these settings, we will generate the bar-service the same way. This will take sometime, but then we get an application with a lot of code, but actually no entities. Therefore we do:
+Remember these settings, we will generate the bar-service the same way. This will take some time, but then we get an application with a lot of code, but actually no entities. Therefore we do:
 
 ``` sh
 $ yo jhipster:entity Foo
@@ -82,14 +82,14 @@ The generator will ask if we want to generate them from our microservices and of
 
 I have skipped the tests, because I expierenced some issues in this phase using the frontend test frameworks... 
 
-Now we got all our applications ready. But we need more of the microservice ecosystem to start it right off. At a very minimum we do need a JHipster Registry", a service discovery and configuration server. We could check it out from their GitHub and run the registry and all three services each in a terminal. Since the ports are unique, this will give us a possible (and sometimes very comfortable) option, to test your application. 
+Now we got all our applications ready. But we need more of the microservice ecosystem to start it right off. At a very minimum we need a JHipster Registry", a service discovery and configuration server. We could check it out from their [GitHub](https://github.com/jhipster/jhipster-registry) and run the registry and all three services each in a terminal. Since the ports are unique, this will give us a possible (and sometimes very comfortable) option, to test your application. 
 
 ### Using Docker Compose to start the cloud
 But there is the more elegant way using docker. Docker provides lightweight virtual machines called "containers". A container may consists of an entire OS like ubuntu or CentOS, but fully running on its hosts kernel. So you can isolate complete environments inside a single docker image and starting your application on them. 
 
-This is not only very usefull during development, you can also deploy these images in production.
+This is not just very usefull during development, you can also deploy these images in production.
 
-A very powerful tool is Docker Compose, which configures several containers at once and start them together, wiring things like network and shared volumes in a single YAML.
+A very powerful tool is Docker Compose, which configures several docker containers at once and start them together, wiring things like network and shared volumes, which can be configured in a single YAML.
 
 Long text, quick solution:
 
@@ -140,7 +140,7 @@ A lot of questions come up when playing arround with all these tools. One quite 
 
 > How do services can communicate with each other?
 
-This question was asked on the JHipster 3.0 night in Singapore, and the answer was like
+This question was asked also on the JHipster 3.0 night in Singapore, and the answer was like
 
 > You should design your services in a way, so they won't have to communicate. But you always can access them using the gateway
 
@@ -154,7 +154,9 @@ were it would be like
 
 A > B, A > B, A > D
 
-With this, every service becomes its own loadbalancer! 
+when would use discovery clients inside the services.
+
+With this, every service has its own loadbalancer! 
 
 ### Definition of Done: Ribbon loadbalancing
 
@@ -338,7 +340,7 @@ public abstract class AbstractMicroserviceClient<E> {
 }
 ```
 
-Ok, this is a bit more source now. This is an abstract class, so we force an concrete implementation. It is a generic typed class, so you can use this implementation for multiple foreign resource at once. We use springs IoC container to give us all we need. The LoadBalancerClient interface will be injected with ribbon, which uses its Eureka configuration to ask for services. As a result it picks one available instance and prepares the url. All this is done with the getUrl helper method. This method can be used to access the resource straight by passing it's path like 
+Ok, this is a bit more source now. This is an abstract class, so we force an concrete implementation. It is a generic typed class, so you can use this implementation for different resources. We use springs IoC container to give us all we need. The LoadBalancerClient interface will be injected with ribbon, which uses its Eureka configuration to ask for services. As a result it picks one available instance and prepares the url. All this is done with the getUrl helper method. This method can be used to access the resource straight by passing it's path like 
 
 ``` java
 getUrl("bars", 123);
@@ -396,7 +398,9 @@ public class BarClient extends AbstractMicroserviceClient<Bar> {
 }
 ```
 
-Can we already test this? No we can't, because JHipster is configured to run with eureka disabled in tests. We need to comment this fields out in 
+> Can we already test this? 
+
+No we can't, because JHipster is configured to run with eureka disabled in tests. We need to comment this fields out in 
 
 ``` yaml src/test/resources/config/application.yml
 #eureka:
@@ -467,16 +471,16 @@ And now the integration test should pass.
 
 ### The good news are...
 
-Using this pattern, each service inside the project can communicate directly with each other using a simple RestClient. 
+Using this pattern, each service inside the project can communicate directly with each other using a simple RestTemplate. 
 
 > Is that all?
 
-No! You also can directly add Hystrix Circuit switchting easily here. Suppose your foo service experience a lot of timeouts when asking for bar service. In a real world scenario this could happen, because some bug on bar service shows up on massive traffic, which rapidly reaches the service in production. It causes the bar service to crash. This would usually provoke errors on the foo service and maybe also the gateway, so one service fail lead to the fail of the whole request chain. Now comes the second part: since foo service is down, no request reach bar service anymore, so it returns from crash. But this will let a whole wall of holded "bar request", which now reach bar at one time and the circle starts again.
+No! You also can directly add Hystrix circuit switchting easily here. Suppose your foo service experience a lot of timeouts when asking for bar service. In a real world scenario this could happen, because some bug on bar service shows up on massive traffic, which rapidly reaches the service in production. It causes the bar service to crash. This would usually provoke errors on the foo service and maybe also the gateway, so one service fail lead to the fail of the whole request chain. Now comes the second part: since foo service is down, no request reach bar service anymore, so it returns from crash. But this will let a whole wall of holded "bar requests", which now reach bar at one time and the circle starts again.
 
-Hystrix store your results in a cache and use is, when the origin service is down. When the origin service returns from downtime, hystrix still will use the local cache for a while to put up traffic on bar over time.
+Hystrix stores your results in a cache and use it, when the origin service is down. When the origin service returns from downtime, hystrix still will use the local cache for a while to put up traffic slowly on bar over time.
 
 
-This is a great feature of spring cloud...but how to use it?
+> This is a great feature of spring cloud...but how to use it?
 
 Just add @EnableCircuitBreaker on FooApp like this:
 
@@ -550,7 +554,7 @@ public class BarClient extends AbstractMicroserviceClient<Bar> {
 
 This is just a bit of code doing a huge work. 
 
-Following this pattern makes your microservice project as much decentralized as possible. The responsibility of the gateway is reduced, since it is not the central load balancer and circuit breaker, but only one of similar.
+Following this pattern makes your microservice project as much decentralized as possible. The responsibility of the gateway is reduced, since it is not the central load balancer and circuit breaker, but only one in a row.
 
 
 ### The bad news...
@@ -559,7 +563,7 @@ We had to turn off the security on bar services API to make this kind of communi
 
 > So how to solve the security problem? Why it is actually a problem?
 
-JHipster uses JWT tokens for *authorization* (not authentication!). Which means, every request should have an bearer access token inside a Authorization header. This JWT can be decrypted on the services side and we can extract the Principal, without querying the gateway, since the gateway is responsible for authentication.
+JHipster uses JWT tokens for *authorization* (not authentication!). Which means, every request should have a bearer access token inside a Authorization header. This JWT can be decrypted on the services side and we can extract the Principal, without querying the gateway, since the gateway is responsible for authentication.
 
 The test just cannot pass, because the very initial request is fired inside the test. You could access some foo service endpoint via the angular frontend, which would add the access token inside the HTTP headers. Spring Cloud Netflix Zuul is able to get this token. So you could store it in a session scoped bean and add on your rest template on output. Then the tests still would fail, but in real world the requests would be authorized.
 
@@ -599,7 +603,7 @@ In my second approach to apply security on the services I mentioned usage of a m
 
 There are a lot use cases, where to use it. For example: trust machines, don't trust users. So you allow a machine to do everything, and apply just privileges on user sessions. If you don't like this, you can apply the authorities from user session to the machine call, getting the same roles as the user has. You can use "scopes" to even distinguish between users privilges, called "authorities", and machine privileges, called "scopes"
 
-Testing could be done using OAuth2 client credential grant type, so we never need a user authentication, to get secure priveleged by the resource servers.
+Performing service calls could be done using OAuth2 client credential grant type, so we never need a user authentication, to get secure priveleged by the resource servers.
 
 
 Let me say, this is not a trivial step anymore, and this article is growing a bit huge right now. I am considering to implement a UAA using JHipster and spring-cloud-security and spring-cloud-oauth2, as I did in my last tutorial.
@@ -612,3 +616,10 @@ Please be free to comment, criticize or ask questions in the comments. If some o
 
 
 Have a great week  
+
+## Resources
+
+* [Demo Application on my GitHub account](https://github.com/xetys/jhipster-ribbon-hystrix)
+* [JHipster 3.0: Introducing Microservices](http://www.ipponusa.com/blog/jhipster-3-0-introducing-microservices/)
+* [JHipster](https://jhipster.github.io)
+
