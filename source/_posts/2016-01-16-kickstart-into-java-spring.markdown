@@ -3,6 +3,7 @@ layout: post
 title: "From script web developer to kickstart into Java and Spring"
 date: 2016-01-16 13:42:28 +0100
 comments: true
+published: false
 categories: 
  - development
  - java

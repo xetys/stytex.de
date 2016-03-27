@@ -2,7 +2,7 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: stytex.de
+url: http://stytex.de
 title: stytex Blog
 subtitle: topics all around development, DevOps and more
 author: David Steiman (aka. xetys)
@@ -70,7 +70,7 @@ github_show_profile_link: true
 github_skip_forks: true
 
 # Twitter
-twitter_user: xetys
+twitter_user: theOnlyScrippi
 twitter_tweet_button: true
 
 # Google +1
@@ -91,8 +91,8 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
-disqus_show_comment_count: false
+disqus_short_name: stytexblog
+disqus_show_comment_count: true
 
 # Google Analytics
 google_analytics_tracking_id: UA-72513059-1
