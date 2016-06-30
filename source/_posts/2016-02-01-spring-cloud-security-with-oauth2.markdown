@@ -3,7 +3,7 @@ layout: post
 title: "Securing spring cloud microservices with OAuth2"
 date: 2016-02-01 16:17:42 +0100
 comments: true
-categories: 
+categories:
  - spring cloud
  - spring
  - java
@@ -16,23 +16,23 @@ categories:
 
 Today I am presenting hours of research about a (appearently) simple question: "How can I maintain security in my cloud?". The task is to enable a simple but mightful possibility to secure spring cloud services down to method invocation level, having a central point of where users and authorities can be assigned.
 
-To achieve this as efficient as possible, OAuth2 is the solution. 
+To achieve this as efficient as possible, OAuth2 is the solution.
 
 In this article we are going to implement a authorization service holding user authorities and client information, and a resource service with protected resources, using Spring OAuth2 and JSON Web Tokens (JWT). I will demonstrate how the resource server can host a RESTful resource, having different security levels, which is defined in example authorities "FOO_READ" and "FOO_WRITE".
 
 The implementation can be downloaded and tested on my [GitHub Repository](https://github.com/xetys/spring-cloud-oauth2-example).
 
 
-Since I am really new to Spring and Spring Cloud including all its concepts, this was a quite hard way oof research. This might sound weird, but at the beginning I couldn't get, why they are all talking about Facebook/GitHub authentication in context of how to secure internal data. It was leading to an obvious question:
+Since I am really new to Spring and Spring Cloud including all its concepts, this was a quite hard way of research. This might sound weird, but at the beginning I couldn't get, why they are all talking about Facebook/GitHub authentication in context of how to secure internal data. It was leading to an obvious question:
 
 
 ### Why OAuth2?
 
-Despite microservices are a rather new topic in modern software development, OAuth2 is a well known authorization technology. It is widely used, to give developers of web application to acces users data at Google/Facebook/GitHub directly from the foreign services in a secure way. But before I explain more details, I will first refocus, what we initially want to achieve: cloud security.
+Despite microservices are a rather new topic in modern software development, OAuth2 is a well known authorization technology. It is widely used, to give developers of web application to access users data at Google/Facebook/GitHub directly from the foreign services in a secure way. But before I explain more details, I will first refocus, what we initially want to achieve: cloud security.
 
 So, what could we do generally, to gain/forbid access to resources inside the cloud to users? Let's take some dumb stupid ways.
 
-We could secure the edge server, assuming all the acces to our data will go through it. This is nearly the same as you would do with classic Spring Mvc Security. But there is no way of method mecurity and, what is the most important: your data is insecure from inside.
+We could secure the edge server, assuming all the acces to our data will go through it. This is nearly the same as you would do with classic Spring Mvc Security. But there is no way of method mscurity and, what is the most important: your data is insecure from inside.
 
 Other way: We share the user credential database for all services and authenticate the user on each service before access. Sounds somehow really stupid, but it's actually a working approach with all the spring security features avaible.
 
@@ -68,7 +68,7 @@ So you see, the four roles of OAuth depend of the direction in which data is req
 
 ### Scopes and Roles, Clients and Users
 
-With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access wich data, but also which application or service, can access which resource. 
+With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access wich data, but also which application or service, can access which resource.
 
 In a web shop, the frontend may act as an client, having access to products, orders and customers, but the backend also about logistics, contracts and more, independend of the users authorities. In the other way, a user may have potential access to a service but no access to all its data, because he is using a web application, where other users are permitted to access while he is not. This "maschine based" access, is our other dimension. If you are familar with math, I can say: the client-scope-relation is liniar independend to the user-authority-relation in OAuth2.
 
@@ -83,7 +83,7 @@ For the later token exchange we first generate a JWT token keystore
 keytool -genkeypair -alias jwt -keyalg RSA -dname "CN=jwt, L=Berlin, S=Berlin, C=DE" -keypass mySecretKey -keystore jwt.jks -storepass mySecretKey
 ```
 
-Then execute 
+Then execute
 
 ``` sh
 $ keytool -list -rfc --keystore jwt.jks | openssl x509 -inform pem -pubkey
@@ -176,7 +176,7 @@ We inherit the class from AuthorizationServerConfigurerAdapter, to configure the
     }
 ```
 
-We assume FOO as resource access identity (so we can check this with #oauth2.hasScope('FOO') to apply client access permission), auto approve for the scope for code authorization and pass the authorities for resource server. 
+We assume FOO as resource access identity (so we can check this with #oauth2.hasScope('FOO') to apply client access permission), auto approve for the scope for code authorization and pass the authorities for resource server.
 
 Now we configure the OAuth2 endpoints to adjust the authentication manager (which will represent the web-security users), and JWT token store configuration:
 
@@ -204,7 +204,7 @@ Now we configure the OAuth2 endpoints to adjust the authentication manager (whic
     }
 ```
 
-We define another configuration for the web security. 
+We define another configuration for the web security.
 
 ``` java
 @Configuration
@@ -244,7 +244,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 Note that there is no "@EnableWebSecurity", because it's automatically applied through @EnableAuthorizationServer.
-We also declare the authenticationManagerBean as a bean, which will be injected in the OAuth configuration above. HttpSecurity and user definition is quite straight forward, and can be implemented in various ways like UserDetailsService. 
+We also declare the authenticationManagerBean as a bean, which will be injected in the OAuth configuration above. HttpSecurity and user definition is quite straight forward, and can be implemented in various ways like UserDetailsService.
 
 We configure the application to run on port 9999 for now.
 
@@ -263,7 +263,7 @@ $ curl "web_app:@localhost:9999/oauth/token" -d "grant_type=password&username=re
 
 ## implementing the resource server
 
-We generate anouther Spring Boot application with Web starter and take the same gradle dependencies we used for the authorization server before. 
+We generate anouther Spring Boot application with Web starter and take the same gradle dependencies we used for the authorization server before.
 Copy the public.cert file into src/main/resources.
 
 First, we have to implement the resource itself:
@@ -377,7 +377,7 @@ You may ask why I didn't use "secureEnabled = true" and the @Secured annotation.
 
 We run this application on port 9090.
 
-### testing 
+### testing
 
 Now copy the access token from our last curl command and create a local variable TOKEN:
 
@@ -388,13 +388,13 @@ $ TOKEN=eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE0NTQ0MDA3MzQsInVzZXJfbmFtZSI6InJlYWRlciI
 and peform a call to read the foo resource
 
 ``` sh
-$ curl -H "Authorization: Bearer $TOKEN" "localhost:9090/foo" 
+$ curl -H "Authorization: Bearer $TOKEN" "localhost:9090/foo"
 ```
 
-and you should get a positive result, while 
+and you should get a positive result, while
 
 ``` sh
-$ curl -XPOST -H "Authorization: Bearer $TOKEN" "localhost:9090/foo" 
+$ curl -XPOST -H "Authorization: Bearer $TOKEN" "localhost:9090/foo"
 ```
 
 should result in access denied. To get access to write on foo, we must get a token as "writer".
@@ -404,7 +404,7 @@ should result in access denied. To get access to write on foo, we must get a tok
 
 This should be a very brief introduction into how you can use OAuth2 in spring cloud microservices. If I explained something wrong, please be free to correct me. I am open to any kind of critism :)
 
-The most important is, this sample works so you can try it out and change it in a way you need. 
+The most important is, this sample works so you can try it out and change it in a way you need.
 May someone find this article useful :)
 
 
