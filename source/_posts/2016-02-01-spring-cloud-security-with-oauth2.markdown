@@ -53,24 +53,30 @@ OAuth2 defines 4 roles in this process:
  - Authorization Server - this is also Facebook, because it knows Peter and its Session and data
  - Client - the AwesomeApp
 
-When Peter tries to sign up with Facebook Login, Awesome App redirects him to FBs authorization server. This knows about Peter, whether he is logged in, and even if Peter already was here before and already aproved it's data. When Peter vists this page for the first time, he has to allow AwesomeApp to access his email and profile data. These to sources are defined as scope, which AwesomeApp defines in Facebooks AwesomeApp Facebook-app. The developer of AwesomeApp provided to ask exactly for these two permissions.
+When Peter tries to sign up with Facebook Login, Awesome App redirects him to FBs authorization server. This knows about Peter, whether he is logged in, and even if Peter already was here before and already aproved it's data. When Peter vists this page for the first time, he has to allow AwesomeApp to access his email and profile data. These two sources are defined as scopes, which AwesomeApp defines in Facebooks AwesomeApp Facebook-app. The developer of AwesomeApp provided to ask exactly for these two permissions.
 
-Peter gives his permission, and is redirected to AwesomeApp with a access token. AwesomeApp then uses the access token to retrieve Peters email and profile data directly from Facebook, with no need to authenticate with Peters credentials. More then that, each time Peter signs in to AwesomeApp, he visit the authorization page again, which already knows his decision and directly responds with a token.
+Peter gives his permission, and is redirected to AwesomeApp with a access token. AwesomeApp then uses the access token to retrieve Peters email and profile data directly from Facebook, with no need to authenticate with Peters credentials. More than that, each time Peter signs in to AwesomeApp, he visit the authorization page again, which already knows his decision and directly responds with a token.
 
 
-So far...but how to apply this on our brutal real world? In springs OAuth2 implementation as well as in all examples, they are talking about clients and scope. Are they the OAuths "clients and scopes" our classical "user and authorities"? Do I have to map authorities to scopes? Why do I need clients?
+So far...but how to apply this on our brutal real world? In springs OAuth2 implementation as well as in all examples, they are talking about clients and scope.
 
-You are maybe trying to map the roles from the first scenario to the real world. This is tricky, because now we talk about a real world:
+> Are OAuths "clients and scopes" the same as our classical "user and authorities"?
+
+> Do I have to map authorities to scopes?
+
+> Why do I need clients?
+
+You are maybe trying to map the roles from the first scenario to the real world. This is tricky!
 
 Second scenario: Any kind of application provides user login. This login results in a exchange of user credentials to access token. All further API calls provide this token in its HTTP header. The services inside are asking the authorization server to ask for permission of access. In the other direction, the services may ask the authorization service about the user who is accessing the data.
 
-So you see, the four roles of OAuth depend of the direction in which data is requested. For asking protected business data from resource server, the authorization server is what it is, the resource servers also, the application is the client and a service, holding the permissions, is the owner. When asking the users data, the authorization service becomes a resource server, but resource server the client.
+As you see, the four OAuth2 roles depend of the direction in which data is requested. For asking protected business data from resource server, the authorization server is what it is, the resource servers also, the application is the client and a service, holding the permissions, is the owner. When asking the users data, the authorization service becomes a resource server, but resource server the client.
 
 ### Scopes and Roles, Clients and Users
 
-With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access wich data, but also which application or service, can access which resource.
+With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access which data, but also which application or service, can access which resource.
 
-In a web shop, the frontend may act as an client, having access to products, orders and customers, but the backend also about logistics, contracts and more, independend of the users authorities. In the other way, a user may have potential access to a service but no access to all its data, because he is using a web application, where other users are permitted to access while he is not. This "maschine based" access, is our other dimension. If you are familar with math, I can say: the client-scope-relation is liniar independend to the user-authority-relation in OAuth2.
+In a web shop, the frontend may act as an client, having access to products, orders and customers, but the backend also about logistics, contracts and more, independent of the users authorities. In the other way, a user may have potential access to a service but no access to all its data, because he is using a web application, where other users are permitted to access while he is not. This "maschine based" access, is our other dimension. If you are familiar with math, I can say: the client-scope-relation is linear independent to the user-authority-relation in OAuth2.
 
 ### Why JWT?
 I was frustratingly trying to bring it up working while exchanging tokens over userInfoUri. But this seems to be buggy at the moment. Implementing the same using JWT makes it working.
@@ -144,7 +150,7 @@ dependencies {
 }
 ```
 
-To make the configuration non-confusing, I will use seperate configurations instead of mixing all in inside the Application class. In both examples they are as they roll out from spring initialzr.
+To make the configuration non-confusing, I will use separate configurations instead of mixing all in inside the Application class. In both examples they are as they roll out from spring initialzr.
 
 
 ### OAuth2Configuration
@@ -382,7 +388,7 @@ We run this application on port 9090.
 Now copy the access token from our last curl command and create a local variable TOKEN:
 
 ``` sh
-$ TOKEN=eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE0NTQ0MDA3MzQsInVzZXJfbmFtZSI6InJlYWRlciIsImF1dGhvcml0aWVzIjpbIkZPT19SRUFEIl0sImp0aSI6IjU1MWI4MTY4LTMwZmItNDZlNS1iMzJlLTc4ODRjNjJlNzZlYiIsImNsaWVudF9pZCI6IndlYl9hcHAiLCJzY29wZSI6WyJGT08iXX0.cKcgkLcbBECSWlz5fllb5V0EkfvrIq6RxjId34mNvhifS5bseQD5c8SlsQ_MvLf6unmosIHT_WL9TP56UUPX5TFrQpT09c2RPvnyhKD5PLlrf9o2RAAL5xS1yQqAWoSoNlx73m8cs8xOjIEix3mthNzEDlLYgsBbQci0ZWBCQHwnRE3OW4oykm4YH5X59X-8Juq1enztbdcjcyt4aFQOG7KVstW5M0MN3y3MMD4O9QgsatzBWDL2lPoazhKuYkR9LcoBZrKF_WzQgwolMhK_ousOxLEHNbKoWxOWJPJnayi6NW8o_2SlkTs7ykDh_GEGOSswpMGhkw98DI5dwFcTQg","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiJ9.eyJ1c2VyX25hbWUiOiJyZWFkZXIiLCJzY29wZSI6WyJGT08iXSwiYXRpIjoiNTUxYjgxNjgtMzBmYi00NmU1LWIzMmUtNzg4NGM2MmU3NmViIiwiZXhwIjoxNDU2OTQ5NTM0LCJhdXRob3JpdGllcyI6WyJGT09fUkVBRCJdLCJqdGkiOiI0MTBlZWNjMS01NTRiLTQ0OGQtOGUyOC1iMGE3NTg5N2JlNzMiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIn0.Rw5ASYQjsJtPfWMMNIQ1TQA53VAqMSoDze8RHzbdRgXkn_BS-Qc84rTNg5deICL_Qdz6D3OtRL2pXgAkOn6ImCDJGaKcroZscZ1Mpy7lmBbsBf1pOolqOsXbCItOPh7h8CpB41ZipTeq-v_-5LQ7wNqwMTOzW_zL8On7bc0ZLF66PY-HK8BlFYUaiJRdJqP1PjfCh8hmOUMYnX8slQcdVMP4V1m6ZzdVFuhywKi3LD6tzrU-q1s2FEUVIpOCKJ6pKv9ts6tSK_lcjLjFO0rRzjTSdtywKE5Gc1rvC4BJALN_ZOn_uiskzo8IIztDUefZJV5OCAZ41igDUXbJHb1NSA
+$ TOKEN=eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE0NTQ0MDA3MzQsInVzZXJfbmFtZSI6InJlYWRlciIsImF1dGhvcml0aWVzIjpbIkZPT19SRUFEIl0sImp0aSI6IjU1MWI4MTY4LTMwZmItNDZlNS1iMzJlLTc4ODRjNjJlNzZlYiIsImNsaWVudF9pZCI6IndlYl9hcHAiLCJzY29wZSI6WyJGT08iXX0.cKcgkLcbBECSWlz5fllb5V0EkfvrIq6RxjId34mNvhifS5bseQD5c8SlsQ_MvLf6unmosIHT_WL9TP56UUPX5TFrQpT09c2RPvnyhKD5PLlrf9o2RAAL5xS1yQqAWoSoNlx73m8cs8xOjIEix3mthNzEDlLYgsBbQci0ZWBCQHwnRE3OW4oykm4YH5X59X-8Juq1enztbdcjcyt4aFQOG7KVstW5M0MN3y3MMD4O9QgsatzBWDL2lPoazhKuYkR9LcoBZrKF_WzQgwolMhK_ousOxLEHNbKoWxOWJPJnayi6NW8o_2SlkTs7ykDh_GEGOSswpMGhkw98DI5dwFcTQg
 ```
 
 and peform a call to read the foo resource
@@ -402,7 +408,7 @@ should result in access denied. To get access to write on foo, we must get a tok
 
 ## Conclusion
 
-This should be a very brief introduction into how you can use OAuth2 in spring cloud microservices. If I explained something wrong, please be free to correct me. I am open to any kind of critism :)
+This should be a very brief introduction into how you can use OAuth2 in spring cloud microservices. If I explained something wrong, please be free to correct me. I am open to any kind of critics :)
 
 The most important is, this sample works so you can try it out and change it in a way you need.
 May someone find this article useful :)
