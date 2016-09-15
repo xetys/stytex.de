@@ -18,19 +18,19 @@ To review, how I got to this statement, I was writing about how Ribbon and Hystr
 
 So, let me quickly what happened the last 6 months:
 
-When my last JHipster arcticle made some rounds over the world wide web, I generated off some demo microservice setup and moved the user domain from the gateway to one microservice I called "jhipster-uaa". After this, I performed the steps from my [spring OAuth2 security article](/blog/2016/02/01/spring-cloud-security-with-oauth2/), so I had an `AuthorizationServerConfigurerAdapter` built in that UAA and turned
+When my last JHipster article made some rounds over the world wide web, I generated off some demo microservice setup and moved the user domain from the gateway to one microservice I called "jhipster-uaa". After this, I performed the steps from my [spring OAuth2 security article](/blog/2016/02/01/spring-cloud-security-with-oauth2/), so I had an `AuthorizationServerConfigurerAdapter` built in that UAA and turned
 the `WebSecurityConfigurerAdapter` from the microservices into a `ResourceServerConfigurerAdapter`. This worked perfectly, so I made some screen:
 
 {% img  https://pbs.twimg.com/media/Cep2ZK_WEAAGqIW.jpg   'UAA-screen' %}
 
 and Julien Dubois, lead developer of JHipster, asked me to document this. I did a little more than that: contributing the entire setup including further updates for declarative service communication and testing tools directly to JHipster, as my aim was to make this overcomplex stuff adaptable easily for all developers.
 
-In other was, I want to:
+In other words, I want to:
 
 > I want to have secure microservices, which can scale
 
 be open and easy to use for all JHipster users, as well as spring developers, who just can generate JHipster code to look how it works.
-So after 6 months of contributing, JHipster released my [official documentation on using JHipster UAA](https://jhipster.github.io/using-uaa/),
+So after 6 months of different works on the generators, JHipster released my [official documentation on using JHipster UAA](https://jhipster.github.io/using-uaa/),
 so I can proudly sum up my thoughts from late march this year, because now it is really simple to use.
 
 
@@ -64,7 +64,7 @@ Using these settings, the gateway will not contain the user and account endpoint
 
 In part 2 I showed how to use Ribbon and Hystrix manually with `RestTemplate`, to let the "foo-service" request data from "bar-service". To make this secure, now the UAA can be used. I will first describe, how we could that in theory, following the pattern as we did it last time.
 
-First, we would need a new `RestTemplate` (with Ribbon and Hystrix) to communicate with the UAA. In addtion, we need to setup basic authentication with username and password "internal", to call the following url: http://uaa/oauth/token using POST and one field "grant_type" with value "client_credentials". As you might recognize, we are about authenticating the microservice for the OAuth client named "internal". The response will be an access token. Now, we get back to our REST client for "bar-service", and add an authorization header with that access token as "Bearer".
+First, we would need a new `RestTemplate` (with Ribbon and Hystrix) to communicate with the UAA. In addition, we need to setup basic authentication with username and password "internal", to call the following url: http://uaa/oauth/token using POST and one field "grant_type" with value "client_credentials". As you might recognize, we are about authenticating the microservice for the OAuth client named "internal". The response will be an access token. Now, we get back to our REST client for "bar-service", and add an authorization header with that access token as "Bearer".
 Despite this is a lot of work, we now achieved a secure communication, as the foo service is now authenticated as a service principal, which
 has an valid access token. The "bar-service" now is able to setup access controll configuration based on roles and scope.
 
@@ -127,13 +127,17 @@ class SomeController {
 
 Of cause, this is just one example. This can be done with some services and so on.
 
-Now, what is that `@AuthorizedFeignClient` annotation? This is some JHipster magic in order to call the UAA server to get a token (if needed, it's stored in memory until it expires). If it is still not clear: it is possible to use `@FeignClient` without any predefined configuration as it is, without any JHipster magic, for every other purpose. This is a nice side affect of my contribution, if you are already familiar with feign.
+Now, what is that `@AuthorizedFeignClient` annotation? This is some JHipster magic in order to call the UAA server to get a token (if needed, it's stored in memory until it expires). If it is still not clear: it is possible to use `@FeignClient` without any predefined configuration as it is, without any JHipster magic, for every other purpose. This is a nice feature now available to all JHipster microservice applications, if you are already familiar with feign.
 
 One more note on `@AuthorizedFeignClient`, I used the "name" property of feign client declaration, in order to make it working. For now, the other notations, such as `@AuthorizedFeignClient("bar")` or `@AuthorizedFeignClient(value = "bar")` are **not** working, due to a bug inside spring.
 
+### using Hazelcast to the rescue
+
+In my recent articles I preferred to generate my projects with a minimal setup, in particular without 2nd level cache. For the moment, there is some issue where a microservice tries to resolve the "uaa" endpoint in configuration phase, to fetch the public key to sign incoming JWTs. Without 2nd level cache this happens to fast, so there aren't any registered services to load balance, because they weren't retrieved. Using Hazelcast is a dirty fix for that.
+
 ## Advanced topics
 
-Despite this solution is quite new to the official JHipster release, it is already battle tested in several application, where I used my own JHipster branch to generate the application. This led to two advanced topics about testing, which made the UAA feature set usable in production.
+Despite this solution is quite new to the official JHipster release, it is already battle tested in several applications, where I used my own JHipster branch to generate the application. This led to two advanced topics about testing, which made the UAA feature set much more usable in production.
 
 
 ### Component testing
@@ -146,6 +150,7 @@ Lets consider some service like this:
 
 @Service
 class FooBarService {
+
   @Inject
   private BarClient barClient;
 
@@ -199,7 +204,6 @@ public class FooBarServiceUnitExTest {
 
 
 ```
-
 
 
 Obviously, this test would fail the most time in a real environment without the mocking, as it logically depends on the contents of bar service, if not exactly these value exists. We use `@MockBean` to overwrite the actual injection of the bar client, and mock the return behavior using `given(...).willReturn(...)` from Mockito.
