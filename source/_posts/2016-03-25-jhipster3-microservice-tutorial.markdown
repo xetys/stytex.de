@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "JHipster 3.0: Intro + Secure service communication"
+title: "JHipster 3.0 Tutorial pt 1+2: Intro + basic service communication"
 date: 2016-03-25 14:35:42 +0100
 comments: true
 categories: [spring, spring-cloud, development, java, oauth2, jhipster]
@@ -12,7 +12,7 @@ It has been a while since my last post, so since JHipster 3.0 was releases durin
 
 The subtopics today are:
 
- 1. scaffolding a microservice architecture with JHipster 3.0 
+ 1. scaffolding a microservice architecture with JHipster 3.0
  2. communication between services with decentralized load balancing (Ribbon) and optional circuit switching (Hystrix)
  3. (maybe in next article) applying the full power of OAuth2 client credential grant to apply fine-grained securing (with possible use cases for this)
 
@@ -26,7 +26,7 @@ And of course: a bit of patency! It took me nearly half of a day to let all the 
 
 ### Definition of Done: the basic mircoservice setup
 
-We will generate an application containing a JHipster gateway (which contains Netflix Zuul and the AngularJS frontend), 2 service applications "foo" and "bar", which will have one entity "Foo" or "Bar" with a field named "value". 
+We will generate an application containing a JHipster gateway (which contains Netflix Zuul and the AngularJS frontend), 2 service applications "foo" and "bar", which will have one entity "Foo" or "Bar" with a field named "value".
 
 ``` sh
 $ mkdir foobar
@@ -80,12 +80,12 @@ $ ./gradlew build -Pprod -x test buildDocker
 
 The generator will ask if we want to generate them from our microservices and of course were to find them (../foo-service and ../bar-service).
 
-I have skipped the tests, because I expierenced some issues in this phase using the frontend test frameworks... 
+I have skipped the tests, because I expierenced some issues in this phase using the frontend test frameworks...
 
-Now we got all our applications ready. But we need more of the microservice ecosystem to start it right off. At a very minimum we need a JHipster Registry", a service discovery and configuration server. We could check it out from their [GitHub](https://github.com/jhipster/jhipster-registry) and run the registry and all three services each in a terminal. Since the ports are unique, this will give us a possible (and sometimes very comfortable) option, to test your application. 
+Now we got all our applications ready. But we need more of the microservice ecosystem to start it right off. At a very minimum we need a JHipster Registry", a service discovery and configuration server. We could check it out from their [GitHub](https://github.com/jhipster/jhipster-registry) and run the registry and all three services each in a terminal. Since the ports are unique, this will give us a possible (and sometimes very comfortable) option, to test your application.
 
 ### Using Docker Compose to start the cloud
-But there is the more elegant way using docker. Docker provides lightweight virtual machines called "containers". A container may consists of an entire OS like ubuntu or CentOS, but fully running on its hosts kernel. So you can isolate complete environments inside a single docker image and starting your application on them. 
+But there is the more elegant way using docker. Docker provides lightweight virtual machines called "containers". A container may consists of an entire OS like ubuntu or CentOS, but fully running on its hosts kernel. So you can isolate complete environments inside a single docker image and starting your application on them.
 
 This is not just very usefull during development, you can also deploy these images in production.
 
@@ -104,7 +104,7 @@ Here you submit "../" as directory, select the three services and finally:
 $ docker-compose up -d
 ```
 
-Depending on how many you or your company spent on your current computer and your network...this takes some time :D 
+Depending on how many you or your company spent on your current computer and your network...this takes some time :D
 
 But after a while, you will get a Eureka running on http://localhost:8761, your application running on http://localhost:8080 and a very cool Kibana dashboard on http://localhost:5601 (if you choosed to use it in the docker-compose sub-generator, I spent about an hour of clicking inside it the first time :) )
 
@@ -135,8 +135,8 @@ We didn't code a lot till here, only generating. Since you can use JHipsters dom
 
 Even if you don't consider to use it in a real application development, JHipster is a good tool to see how things work.
 
-## Part 2: inter-service communication 
-A lot of questions come up when playing arround with all these tools. One quite obvious is: 
+## Part 2: inter-service communication
+A lot of questions come up when playing arround with all these tools. One quite obvious is:
 
 > How do services can communicate with each other?
 
@@ -156,7 +156,7 @@ A > B, A > B, A > D
 
 when would use discovery clients inside the services.
 
-With this, every service has its own loadbalancer! 
+With this, every service has its own loadbalancer!
 
 ### Definition of Done: Ribbon loadbalancing
 
@@ -340,7 +340,7 @@ public abstract class AbstractMicroserviceClient<E> {
 }
 ```
 
-Ok, this is a bit more source now. This is an abstract class, so we force an concrete implementation. It is a generic typed class, so you can use this implementation for different resources. We use springs IoC container to give us all we need. The LoadBalancerClient interface will be injected with ribbon, which uses its Eureka configuration to ask for services. As a result it picks one available instance and prepares the url. All this is done with the getUrl helper method. This method can be used to access the resource straight by passing it's path like 
+Ok, this is a bit more source now. This is an abstract class, so we force an concrete implementation. It is a generic typed class, so you can use this implementation for different resources. We use springs IoC container to give us all we need. The LoadBalancerClient interface will be injected with ribbon, which uses its Eureka configuration to ask for services. As a result it picks one available instance and prepares the url. All this is done with the getUrl helper method. This method can be used to access the resource straight by passing it's path like
 
 ``` java
 getUrl("bars", 123);
@@ -398,9 +398,9 @@ public class BarClient extends AbstractMicroserviceClient<Bar> {
 }
 ```
 
-> Can we already test this? 
+> Can we already test this?
 
-No we can't, because JHipster is configured to run with eureka disabled in tests. We need to comment this fields out in 
+No we can't, because JHipster is configured to run with eureka disabled in tests. We need to comment this fields out in
 
 ``` yaml src/test/resources/config/application.yml
 #eureka:
@@ -471,7 +471,7 @@ And now the integration test should pass.
 
 ### The good news are...
 
-Using this pattern, each service inside the project can communicate directly with each other using a simple RestTemplate. 
+Using this pattern, each service inside the project can communicate directly with each other using a simple RestTemplate.
 
 > Is that all?
 
@@ -552,7 +552,7 @@ public class BarClient extends AbstractMicroserviceClient<Bar> {
 ...
 ```
 
-This is just a bit of code doing a huge work. 
+This is just a bit of code doing a huge work.
 
 Following this pattern makes your microservice project as much decentralized as possible. The responsibility of the gateway is reduced, since it is not the central load balancer and circuit breaker, but only one in a row.
 
@@ -570,7 +570,7 @@ The test just cannot pass, because the very initial request is fired inside the 
 
 An other approach would be to make your RestTemplate been wrapped into a bean with this interface:
 
-``` java 
+``` java
 interface JHipsterAuthenticatedRest {
 	public RestTemplate getTemplate();
 	public boolean isAuthenticated();
@@ -608,6 +608,8 @@ Performing service calls could be done using OAuth2 client credential grant type
 
 Let me say, this is not a trivial step anymore, and this article is growing a bit huge right now. I am considering to implement a UAA using JHipster and spring-cloud-security and spring-cloud-oauth2, as I did in my last tutorial.
 
+***update***: This "consideration" has an happy end: read on on my [article about secure service communication](/blog/2016/08/31/jhipster-3-dot-6-secure-service-communication/)
+
 ## Conclusion
 
 Yes, it was sayed a lot of times: JHipster is a great job! There is a lot of work you can save just by generating. This is very interesting to me, and I hope this article gives some a good introduction into some practices.
@@ -622,4 +624,3 @@ Have a great week
 * [Demo Application on my GitHub account](https://github.com/xetys/jhipster-ribbon-hystrix)
 * [JHipster 3.0: Introducing Microservices](http://www.ipponusa.com/blog/jhipster-3-0-introducing-microservices/)
 * [JHipster](https://jhipster.github.io)
-
