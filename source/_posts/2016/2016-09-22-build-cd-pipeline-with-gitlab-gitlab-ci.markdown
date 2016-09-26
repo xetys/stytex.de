@@ -1,8 +1,8 @@
 ---
 layout: "post"
-title: "Build CD pipeline with Gitlab + GitLab CI for JHipster microservices"
-date: "2016-09-12 13:50"
-categories: [JHipster, spring cloud, spring boot, devops, development, java, gitlab, gitlab CI]
+title: "Build CD pipeline with Gitlab + GitLab CI for spring cloud microservices"
+date: "2016-09-22 13:50"
+categories: [JHipster, spring cloud, spring boot, devops, development, gitlab, gitlab CI]
 published: true
 ---
 
