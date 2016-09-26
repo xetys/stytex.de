@@ -4,6 +4,7 @@ title: "Build CD pipeline with Gitlab + GitLab CI for spring cloud microservices
 date: "2016-09-22 13:50"
 categories: [JHipster, spring cloud, spring boot, devops, development, gitlab, gitlab CI]
 published: true
+comments: true
 ---
 
 Today I am writing about a continuous delivery pipeline, built on top of GitLab and GitLab CI. As a very simple but production tested deployment solution, I will push to a [Dokku][] cloud.
