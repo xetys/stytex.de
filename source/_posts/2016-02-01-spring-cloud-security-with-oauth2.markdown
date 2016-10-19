@@ -12,13 +12,15 @@ categories:
  - development
 ---
 
+***update on 2016-10-19: more on JWT, fixed typos, clarified some aspects***
+
 ## From Zero to OAuth2 in Spring cloud
 
-Today I am presenting hours of research about a (appearently) simple question: "How can I maintain security in my cloud?". The task is to enable a simple but mightful possibility to secure spring cloud services down to method invocation level, having a central point of where users and authorities can be assigned.
+Today I am presenting hours of research about a (apparently) simple question: "How can I maintain security in my microservices architecture?". The task is to enable a simple but mighty possibility to secure spring cloud services down to method invocation level, having a central point of where users and authorities can be assigned.
 
 To achieve this as efficient as possible, OAuth2 is the solution.
 
-In this article we are going to implement a authorization service holding user authorities and client information, and a resource service with protected resources, using Spring OAuth2 and JSON Web Tokens (JWT). I will demonstrate how the resource server can host a RESTful resource, having different security levels, which is defined in example authorities "FOO_READ" and "FOO_WRITE".
+In this article we are going to implement an authorization server, holding user authorities and client information, and a resource service with protected resources, using Spring OAuth2 and JSON Web Tokens (JWT). I will demonstrate, how the resource server can host a RESTful resource, having different security levels, which is defined in example authorities "FOO_READ" and "FOO_WRITE".
 
 The implementation can be downloaded and tested on my [GitHub Repository](https://github.com/xetys/spring-cloud-oauth2-example).
 
@@ -28,19 +30,19 @@ Since I am really new to Spring and Spring Cloud including all its concepts, thi
 
 ### Why OAuth2?
 
-Despite microservices are a rather new topic in modern software development, OAuth2 is a well known authorization technology. It is widely used, to give developers of web application to access users data at Google/Facebook/GitHub directly from the foreign services in a secure way. But before I explain more details, I will first refocus, what we initially want to achieve: cloud security.
+Despite microservices are a rather new topic in modern software development, OAuth2 is a well known authorization technology. It is widely used, to give web applications developers access to users data at Google/Facebook/GitHub directly from the foreign services in a secure way. But before I explain more details, I will first refocus, what we initially want to achieve: cloud security.
 
 So, what could we do generally, to gain/forbid access to resources inside the cloud to users? Let's take some dumb stupid ways.
 
-We could secure the edge server, assuming all the acces to our data will go through it. This is nearly the same as you would do with classic Spring Mvc Security. But there is no way of method mscurity and, what is the most important: your data is insecure from inside.
+We could secure the edge server, assuming all the access to our data will go through it. This is nearly the same as you would do with classic Spring MVC Security. But there is no way of method security and - what is the most important - your data is insecure from inside attacks.
 
-Other way: We share the user credential database for all services and authenticate the user on each service before access. Sounds somehow really stupid, but it's actually a working approach with all the spring security features avaible.
+Other way: We share the user credential database for all services and authenticate the user on each service before access. Sounds somehow really stupid, but it's actually a working approach with all the spring security features available.
 
-Better way: The user authenticates on a authorization service, which maps the user session to a token. Any further API call to the resource services can provide this token. The services are able to recognize the provided token and ask the authorization service, which authorities this token grants, and who is the owner of this token.
+Better way: The user authenticates on a authorization service, which maps the user session to a token. Any further API call to the resource services must provide this token. The services are able to recognize the provided token and ask the authorization service, which authorities this token grants, and who is the owner of this token.
 
 This sounds like a good solution, doesn't it? But what's about secure token transmission? How to distinguish between access from a user and access from another service (and this is also something we could need!)
 
-So this leads us to: OAuth2. Accessing sensible data from Facebook/Google is pretty much the same as accessing protected data from the own cloud. Since they are working for some years on this solution, we can apply this battleground approved solution for our needs.
+So this leads us to: OAuth2. Accessing sensible data from Facebook/Google is pretty much the same as accessing protected data from the own backend. Since they are working for some years on this solution, we can apply this battleground approved solution for our needs.
 
 ## How OAuth2 works
 
@@ -53,7 +55,7 @@ OAuth2 defines 4 roles in this process:
  - Authorization Server - this is also Facebook, because it knows Peter and its Session and data
  - Client - the AwesomeApp
 
-When Peter tries to sign up with Facebook Login, Awesome App redirects him to FBs authorization server. This knows about Peter, whether he is logged in, and even if Peter already was here before and already aproved it's data. When Peter vists this page for the first time, he has to allow AwesomeApp to access his email and profile data. These two sources are defined as scopes, which AwesomeApp defines in Facebooks AwesomeApp Facebook-app. The developer of AwesomeApp provided to ask exactly for these two permissions.
+When Peter tries to sign up with Facebook Login, Awesome App redirects him to FBs authorization server. This knows about Peter, whether he is logged in, and even if Peter already was here before and already approved it's data. When Peter visits this page for the first time, he has to allow AwesomeApp to access his email and profile data. These two sources are defined as scopes, which AwesomeApp defines in Facebooks AwesomeApp Facebook-app. The developer of AwesomeApp provided to ask exactly for these two permissions.
 
 Peter gives his permission, and is redirected to AwesomeApp with a access token. AwesomeApp then uses the access token to retrieve Peters email and profile data directly from Facebook, with no need to authenticate with Peters credentials. More than that, each time Peter signs in to AwesomeApp, he visit the authorization page again, which already knows his decision and directly responds with a token.
 
@@ -62,24 +64,32 @@ So far...but how to apply this on our brutal real world? In springs OAuth2 imple
 
 > Are OAuths "clients and scopes" the same as our classical "user and authorities"?
 
-> Do I have to map authorities to scopes?
+> Do I have to map authorities to scopes or users to clients?
 
 > Why do I need clients?
 
-You are maybe trying to map the roles from the first scenario to the real world. This is tricky!
+You are maybe trying to map the roles from the first scenario to enterprise case. This is tricky!
 
-Second scenario: Any kind of application provides user login. This login results in a exchange of user credentials to access token. All further API calls provide this token in its HTTP header. The services inside are asking the authorization server to ask for permission of access. In the other direction, the services may ask the authorization service about the user who is accessing the data.
+Second scenario: Any kind of application provides user login. This login results in a exchange of user credentials to access token. All further API calls provide this token in its HTTP header. The services inside are asking the authorization server to check the token and grant access. In the other direction, the services may request data from another service, granted by authorization service using a different client with different permissions than the user, which initiated the request.
 
-As you see, the four OAuth2 roles depend of the direction in which data is requested. For asking protected business data from resource server, the authorization server is what it is, the resource servers also, the application is the client and a service, holding the permissions, is the owner. When asking the users data, the authorization service becomes a resource server, but resource server the client.
+As you see, the four OAuth2 roles depend of the direction in which data is requested. For asking protected business data from resource server, the authorization server is what it is, the resource servers also, the application is the client and the service holding the permissions (often the same as authorization server), is the owner. When asking the users data, the authorization service becomes a resource server, and resource server the client.
 
 ### Scopes and Roles, Clients and Users
 
-With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access which data, but also which application or service, can access which resource.
+With OAuth2 you can define, which application (web, mobile, desktop, additional website) can access which resources. So there is one dimension, where we have to decide which user can access which data, but also which application or service, can access which resource. In other words: scopes are access controlling which endpoints are visible to clients, and authorities filter the data to the user based on his permissions.
 
-In a web shop, the frontend may act as an client, having access to products, orders and customers, but the backend also about logistics, contracts and more, independent of the users authorities. In the other way, a user may have potential access to a service but no access to all its data, because he is using a web application, where other users are permitted to access while he is not. This "maschine based" access, is our other dimension. If you are familiar with math, I can say: the client-scope-relation is linear independent to the user-authority-relation in OAuth2.
+In a web shop, the frontend may act as an client, having access to products, orders and customers, but the backend also about logistics, contracts and more, independent of the users authorities. In the other way, a user may have potential access to a service but no access to all its data, because he is using a web application, where other users are permitted to access while he is not. This service-to-service access, is our other dimension. If you are familiar with math, I can say: the client-scope-relation is linear independent to the user-authority-relation in OAuth2.
 
 ### Why JWT?
-I was frustratingly trying to bring it up working while exchanging tokens over userInfoUri. But this seems to be buggy at the moment. Implementing the same using JWT makes it working.
+OAuth2 is not about, how the token is looking like and where it is stored. So one approach is, to generate random strings and save token related data to these string in a store. Over a token endpoint, other services may ask something "is this token valid, and which permissions does it grant?". This is the "user info URL" approach, where the authorization server is turning into a resource server for the user info endpoint.
+
+As we talking about microservices, we need a way to replicate such a token store, to make the authorization server scalable. Despite this is a tricky task, there is one more issue with user info URL. For each request against a resource microservice containing a token in the header, the service will perform another request to authorization server to check the token. So without caching tricks, we got twice more request we really need, only for security. So both, scaling token store and token request are affecting the scalability of our architecture heavily. This is where JWT (pronounced as "jot") come into play.
+
+In short, the answer of that user info URL request, containing info about the OAuth client, optionally the user with its authorities and the granted scope, is serialized into JSON first, encoded with base64 and finally signed using a token. The result is a so called JSON Webtoken, which we use as an access token directly. When these JWTs are signed using RSA, the authorization server first signs it with the RSA private key, assuming every resource server will have a public key. When this token is passed via HTTP header, the resource servers just have to take this JWT, verify it was really signed by the proper private key (meaning this token is coming from authorization server), and instead of asking user info, deserializing the JSON content into a OAuth2Authentication, establishing a SecurityContext based on this.
+
+Using JWT provides a simple way of transmitting hard to fake tokens, containing the permissions and user data in the access token string. Since all the data is already inside, there neither is a need to maintain a token store, nor the resource servers must ask authorization for token checks.
+
+So, using JWT makes OAuth2 available to microservices, without affecting the architectures scalability.
 
 ## implementing the authorization service
 
@@ -143,10 +153,10 @@ Now we adjust the dependencies to this
 
 ```
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.security.oauth:spring-security-oauth2:2.0.8.RELEASE')
-	compile('org.springframework.security:spring-security-jwt:1.0.3.RELEASE')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	//...
+	compile('org.springframework.security.oauth:spring-security-oauth2')
+	compile('org.springframework.security:spring-security-jwt')
+  //..
 }
 ```
 
@@ -162,7 +172,7 @@ We begin with the following configuration
 @Configuration
 @EnableAuthorizationServer
 public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
-
+    //..
 }
 ```
 
@@ -170,7 +180,8 @@ To define a default spring configuration, and enable the current application as 
 
 We inherit the class from AuthorizationServerConfigurerAdapter, to configure the details.
 
-``` java
+``` java src/main/java/package/config/OAuth2Configuration.java
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
@@ -254,22 +265,23 @@ We also declare the authenticationManagerBean as a bean, which will be injected 
 
 We configure the application to run on port 9999 for now.
 
+***indepth: we are using OAuth2 as authentication protocol, too. This approach is similar to OpenID connect, which is also a standard authentication protocol over OAuth2, more relying to public identity providers, such as Google, GitHub etc.***
+
 ### get access tokens
 
-I will show how to get access token directly via username/password. There are other authorization types such as auth code, implicit, client credentials.
+I will show how to get access token directly via username/password. There are other authorization types such as authorization code, implicit, client credentials.
 
 To get a token, just
 
 ``` sh
-$ curl "web_app:@localhost:9999/oauth/token" -d "grant_type=password&username=reader&password=reader"
+$ curl -XPOST "web_app:@localhost:9999/oauth/token" -d "grant_type=password&username=reader&password=reader"
 {"access_token":"eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE0NTQ0MDA3MzQsInVzZXJfbmFtZSI6InJlYWRlciIsImF1dGhvcml0aWVzIjpbIkZPT19SRUFEIl0sImp0aSI6IjU1MWI4MTY4LTMwZmItNDZlNS1iMzJlLTc4ODRjNjJlNzZlYiIsImNsaWVudF9pZCI6IndlYl9hcHAiLCJzY29wZSI6WyJGT08iXX0.cKcgkLcbBECSWlz5fllb5V0EkfvrIq6RxjId34mNvhifS5bseQD5c8SlsQ_MvLf6unmosIHT_WL9TP56UUPX5TFrQpT09c2RPvnyhKD5PLlrf9o2RAAL5xS1yQqAWoSoNlx73m8cs8xOjIEix3mthNzEDlLYgsBbQci0ZWBCQHwnRE3OW4oykm4YH5X59X-8Juq1enztbdcjcyt4aFQOG7KVstW5M0MN3y3MMD4O9QgsatzBWDL2lPoazhKuYkR9LcoBZrKF_WzQgwolMhK_ousOxLEHNbKoWxOWJPJnayi6NW8o_2SlkTs7ykDh_GEGOSswpMGhkw98DI5dwFcTQg","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiJ9.eyJ1c2VyX25hbWUiOiJyZWFkZXIiLCJzY29wZSI6WyJGT08iXSwiYXRpIjoiNTUxYjgxNjgtMzBmYi00NmU1LWIzMmUtNzg4NGM2MmU3NmViIiwiZXhwIjoxNDU2OTQ5NTM0LCJhdXRob3JpdGllcyI6WyJGT09fUkVBRCJdLCJqdGkiOiI0MTBlZWNjMS01NTRiLTQ0OGQtOGUyOC1iMGE3NTg5N2JlNzMiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIn0.Rw5ASYQjsJtPfWMMNIQ1TQA53VAqMSoDze8RHzbdRgXkn_BS-Qc84rTNg5deICL_Qdz6D3OtRL2pXgAkOn6ImCDJGaKcroZscZ1Mpy7lmBbsBf1pOolqOsXbCItOPh7h8CpB41ZipTeq-v_-5LQ7wNqwMTOzW_zL8On7bc0ZLF66PY-HK8BlFYUaiJRdJqP1PjfCh8hmOUMYnX8slQcdVMP4V1m6ZzdVFuhywKi3LD6tzrU-q1s2FEUVIpOCKJ6pKv9ts6tSK_lcjLjFO0rRzjTSdtywKE5Gc1rvC4BJALN_ZOn_uiskzo8IIztDUefZJV5OCAZ41igDUXbJHb1NSA","expires_in":43199,"scope":"FOO","jti":"551b8168-30fb-46e5-b32e-7884c62e76eb"}
 ```
 
 
-
 ## implementing the resource server
 
-We generate anouther Spring Boot application with Web starter and take the same gradle dependencies we used for the authorization server before.
+We generate another Spring Boot application with Web starter and take the same gradle dependencies we used for the authorization server before.
 Copy the public.cert file into src/main/resources.
 
 First, we have to implement the resource itself:
@@ -279,12 +291,12 @@ First, we have to implement the resource itself:
 @RequestMapping("/foo")
 public class WebController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String readFoo() {
         return "read foo " + UUID.randomUUID().toString();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String writeFoo() {
         return "write foo " + UUID.randomUUID().toString();
     }
@@ -372,7 +384,7 @@ and change the writeFoo method in our rest controller:
 
 ``` java
     @PreAuthorize("hasAuthority('FOO_WRITE')")
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String writeFoo() {
         return "write foo " + UUID.randomUUID().toString();
     }
@@ -412,6 +424,11 @@ This should be a very brief introduction into how you can use OAuth2 in spring c
 
 The most important is, this sample works so you can try it out and change it in a way you need.
 May someone find this article useful :)
+
+## More resources
+
+* [JHipster UAA docs](http://jhipster.github.io/using-uaa/) for using a working setup using this basics to secure spring cloud microservices
+* [JHiosoter UAA demo setup](https://github.com/xetys/jhipster-uaa-setup): a set of several JHipster microservices, demonstrating both user-to-service (Angular client) and service-to-service authorization (Feign Clients)
 
 
 Have a great week.
