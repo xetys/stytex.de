@@ -7,7 +7,7 @@ require "stringex"
 ssh_user       = "stx"
 ssh_port = "19348"
 document_root  = "~/octopress/"
-rsync_delete   = true
+rsync_delete   = false
 rsync_args     = ""  # Any extra arguments to pass to rsync
 deploy_default = "rsync"
 
