@@ -1,6 +1,7 @@
 #!/bin/bash
 
-COMMAND=${1}
+COMMAND=$1
+
 
 case ${COMMAND} in
     run)
@@ -9,6 +10,7 @@ case ${COMMAND} in
         ;;
     build)
         echo "building..."
+        docker run --rm -it -e LC_CTYPE="en_US.UTF-8" -e LANG="en_US.UTF-8" -v ${PWD}:/blog xetys/octopress-build:latest rake generate
         ;;
     sync)
         echo "sync..."

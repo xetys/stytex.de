@@ -1,3 +1,21 @@
+## stytex.de Blog repo
+
+This repo creates the content on stytex.de. For a better UX there is a simple `stytex-blog` tool to manage the basic workflow. Only docker is needed to use this blog.
+
+```
+./stytex-blog <COMMAND>
+```
+
+with the following commands:
+
+* run:      runs the preview on port 4000
+* build:    builds a clean public folder
+* sync:     syncs the current state to aws (aws cli must be installed and configured!)
+* deploy:   build+sync
+
+
+
+
 ## Octopress 3.0
 
 Note: Octopress 3.0 is in development at https://github.com/octopress/octopress
