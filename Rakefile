@@ -55,9 +55,12 @@ end
 desc "Generate jekyll site"
 task :generate do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
-  puts "## Generating Site with Jekyll"
+  puts "## Generating CSS"
   system "compass compile --css-dir #{source_dir}/stylesheets"
-  system "LC_ALL=en_US.UTF-8 jekyll build"
+  puts "## Generating Site with Jekyll"
+  jekyllPid = Process.spawn({"LC_ALL"=>"en_US.UTF-8"}, "jekyll build")
+  
+  Process.wait(jekyllPid)
 end
 
 desc "Watch the site and regenerate when it changes"

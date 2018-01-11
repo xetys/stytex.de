@@ -8,12 +8,16 @@ case ${COMMAND} in
         echo "will start.."
         docker run --rm -it -v ${PWD}:/blog -p 4000:4000 xetys/octopress-build:latest rake preview
         ;;
+    bash)
+        docker run --rm -it -v ${PWD}:/blog -p 4000:4000 xetys/octopress-build:latest bash
+        ;;
     build)
         echo "building..."
-        docker run --rm -it -e LC_CTYPE="en_US.UTF-8" -e LANG="en_US.UTF-8" -v ${PWD}:/blog xetys/octopress-build:latest rake generate
+        docker run --rm -it -e LC_CTYPE="en_US.UTF-8" -e LANG="en_US.UTF-8" -v ${PWD}:/blog xetys/octopress-build:latest bundle exec rake generate --debug
         ;;
     sync)
         echo "sync..."
+        aws s3 sync public s3://stytex.de/ --region eu-central-1
         ;;
     deploy)
         echo "deploying..."
