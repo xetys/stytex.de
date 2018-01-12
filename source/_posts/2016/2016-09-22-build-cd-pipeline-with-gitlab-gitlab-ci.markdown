@@ -21,6 +21,8 @@ The first part will cover the configuration part of GitLab, the second will demo
 
 {% img center /images/2016/04/deployment_gitlab_ci_dokku.png 1338 500 CD pipeline with GitLab CI %} <center>***(CD pipeline with GitLab CI)***</center>
 
+<!--more-->
+
 This setup follows both, the [immutable server pattern](http://martinfowler.com/bliki/ImmutableServer.html) and a policy (I don't know if there is a definition), where deployment to production must be allowed using CI by enforcing passed tests in all stages. In other words: we want to the one side, having the entire deployment process be as easy as `git push origin master`, but preventing failing deployments using CI and a good test coverage.
 
 In practice, after following this tutorial, you should have an staging and production environment, which can be deployed using either `git push origin master` or `git push origin staging`.

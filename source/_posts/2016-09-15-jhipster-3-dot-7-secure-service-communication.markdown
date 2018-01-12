@@ -6,9 +6,13 @@ comments: true
 categories: [spring, spring-cloud, development, java, oauth2, jhipster]
 ---
 
+This article introduces the core feature set of [JHipster UAA](http://www.jhipster.tech/using-uaa/), in particular building HTTP clients for service-to-service communication, security configuration and testing.
+
 ## Intro
 
 It has been a while since my last article. For those, who might be crazy enough to follow my blog should remember the statement of my last article on how to get started with JHipster microservices, which became a core feature since version 3.0.
+
+<!--more-->
 
 My statement was:
 

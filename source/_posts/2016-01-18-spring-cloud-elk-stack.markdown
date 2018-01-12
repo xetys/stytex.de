@@ -3,7 +3,7 @@ layout: post
 title: "log analysis with ELK Stack in spring cloud"
 date: 2016-01-18 15:55:47 +0100
 comments: true
-categories: 
+categories:
  - spring cloud
  - spring
  - microservices
@@ -25,9 +25,11 @@ Logstash is a tool wiring log streams our sources and saving them into elastichs
 
 Kibana actually is a backend offering several tools for log analysis.
 
+<!--more-->
+
 ## How to make it work
 
-To see a working example with docker-compose, download the sources from [my GitHub](https://github.com/xetys/microservices-example/releases/tag/1.0). You are also free to 
+To see a working example with docker-compose, download the sources from [my GitHub](https://github.com/xetys/microservices-example/releases/tag/1.0). You are also free to
 
 ``` sh
 $ git clone https://github.com/xetys/microservices-example.git
@@ -41,7 +43,7 @@ Logstash will run with UDP Port 5000 open waiting for log in JSON format. So we 
 
 So we start with configuring the ELK-Stack with a logstash config:
 
-``` 
+```
 input {
     udp {
        port => 5000
@@ -154,5 +156,3 @@ And you are done!
 You know can acces Kibana on http://localhost:8200/ and explode its features. If there are more different services to send to logstash, you may use a shared location to fetch logfiles, passing them through filters.
 
 Have a great weekend!
-
-

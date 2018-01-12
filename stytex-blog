@@ -2,6 +2,15 @@
 
 COMMAND=$1
 
+build() {
+    echo "building..."
+    docker run --rm -it -v ${PWD}:/blog xetys/octopress-build:latest rake generate
+}
+
+sync() {
+    echo "sync..."
+    aws s3 sync public s3://stytex.de/ --region eu-central-1
+}
 
 case ${COMMAND} in
     run)
@@ -12,15 +21,14 @@ case ${COMMAND} in
         docker run --rm -it -v ${PWD}:/blog -p 4000:4000 xetys/octopress-build:latest bash
         ;;
     build)
-        echo "building..."
-        docker run --rm -it -e LC_CTYPE="en_US.UTF-8" -e LANG="en_US.UTF-8" -v ${PWD}:/blog xetys/octopress-build:latest bundle exec rake generate --debug
+        build
         ;;
     sync)
-        echo "sync..."
-        aws s3 sync public s3://stytex.de/ --region eu-central-1
+        sync
         ;;
     deploy)
-        echo "deploying..."
+        build
+        sync
         ;;
     *)
         echo "usage: (run|build|sync|deploy)"

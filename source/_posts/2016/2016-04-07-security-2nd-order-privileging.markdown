@@ -17,6 +17,8 @@ business resources. You maybe think, this is "authorization". While authorizatio
 is a technological implementation of bringing authorizing information when it's needed,
 "privileging" is the way of what authorities exists and how they are related to the system users.
 
+<!--more-->
+
 ## Definitions
 
 It's much easier to talk about these thinks, when there are exact terms, so lets

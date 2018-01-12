@@ -3,7 +3,7 @@ layout: post
 title: "How to integrate any webapp into Spring Cloud using Sidecar Applications"
 date: 2016-01-18 15:55:34 +0100
 comments: true
-categories: 
+categories:
  - microservice
  - spring cloud
  - java
@@ -23,11 +23,13 @@ You may were looking for:
 - ...and also give the (maybe legacy) applications all the feature a Spring Boot Service inside the cloud have
 - ...without big changes on the "outside" apps dependencies or even code?
 
-So this what sidecar applications are for: integrating web applications outside the cloud infrastructure accessible in both directions. 
+So this what sidecar applications are for: integrating web applications outside the cloud infrastructure accessible in both directions.
 
 ### What are Sidecar Applications?
 
 Inside the Spring Cloud each Spring Boot application gains its power through dependencies and annotation magic performed on the classes. So things, which usualy consist of a lot of implementations behind, are adjustable through one annotation. But inside a microservice cloud there is also a need of enabling usage of other applications written in different frameworks, languages or even running on other plattforms. One central argument for using microservice architectures is, that there are no limitations (ideally) for which tools you use to build web applications.
+
+<!--more-->
 
 But inside a distributed system, this is not trivial. One possible way to achive this to build or find libraries written in the native language/framework of the outside application to communicate with the cloud, implementing features as Eureka service registration and discovery, Hystric curcuit breaking and so on. This actually, would be a lot of work...
 
@@ -118,7 +120,7 @@ This script first creates a new virtual machine with boot2docker on it, then exe
 $ docker-compose build
 ```
 
-automatically, to build all docker containers. 
+automatically, to build all docker containers.
 
 I have automated this part dirty, to make this example easely run. In fact I am really new to this topic at this time, this is not the best way to achieve this. Gradle has some docker plugins which may things I do more elegant and efficient. But you can take a look inside this script to understand, how the cloud ist setted up for development.
 
@@ -219,7 +221,7 @@ This is quite straight forward by defining a new controller action in rails appl
   end
 ```
 
-and wire it 
+and wire it
 
 ``` ruby routes.rb
 get 'health' => 'application#health'
@@ -233,5 +235,3 @@ Well, there we are: Our "sidecarred" rails application appears as "CLOUD-RAILS" 
 
 
 Have a good day, hope this article helps someone!
-
-

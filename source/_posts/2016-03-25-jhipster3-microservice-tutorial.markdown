@@ -16,6 +16,8 @@ The subtopics today are:
  2. communication between services with decentralized load balancing (Ribbon) and optional circuit switching (Hystrix)
  3. (maybe in next article) applying the full power of OAuth2 client credential grant to apply fine-grained securing (with possible use cases for this)
 
+<!--more-->
+
 ## Part 1: Scaffolding a microservice application using JHipster
 
 For those who didn't know: [JHipster](https://jhipster.github.io) is a great project for creating awesome applications with Spring, Spring Cloud OSS and more tools for backend, as well as AngularJS, Bower and Gulp on the frontend. Basicly it is a set of yeoman generators, providing creation and modification of a standard setup width all these tools wired up in a working project. It would take to long to list all things inside the box of JHipster, so I follow directly to making our hands dirty :)

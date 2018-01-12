@@ -24,6 +24,7 @@ In this article we are going to implement an authorization server, holding user 
 
 The implementation can be downloaded and tested on my [GitHub Repository](https://github.com/xetys/spring-cloud-oauth2-example).
 
+<!--more-->
 
 Since I am really new to Spring and Spring Cloud including all its concepts, this was a quite hard way of research. This might sound weird, but at the beginning I couldn't get, why they are all talking about Facebook/GitHub authentication in context of how to secure internal data. It was leading to an obvious question:
 

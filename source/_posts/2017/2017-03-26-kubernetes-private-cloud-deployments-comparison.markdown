@@ -31,6 +31,7 @@ To be more precise, what I try to achieve:
 
 > I want to have load balancing and storage administration running out of the box
 
+<!--more-->
 
 To give myself a good answer to this non-trivial question, I tried out all good looking solutions out there I could find. Thanks to [ProfitBricks][], I got some free resources on their platform, so I could try the candidates fast. In this article, I will first give a short summary to the comparison for the less patient reader, and then walk through the details of each setup.
 

@@ -11,6 +11,8 @@ categories: [kubernetes, devops, development]
 
 In this guide I will explain setup a production grade cloud on your bare metal with kubernetes (aka. k8s), including edge routing. When I started my own research on k8s several months ago, I faced the fact this system is only available fully functioning mostly on cloud providers such as GCE, Azure etc. I found a lot of guides, how to deploy k8s onto different cloud systems as CloudStack, Openstack or Juju. But all these guides were specific to more advanced cloud system, or meant to purchase cloud services, which I find expensive. There were also different bare metal guides, which were like guides from hell, covering the entire k8s stack and ended up in tons of pages to read. So this was not a good introduction for someone, who has actually no idea, how the k8s ecosystem works, and just wants some best practice or working sample, to slightly become familiar with the components.
 
+<!--more-->
+
 I also found a couple of GitHub repos, with a setup to a specific provisioning system as Terraform, ansible etc., and had a lot of "cool features" bundled inside, so for a newbie it was messy. In the end, I didn't find a guide describing how to solve some classical problems as domain routing, storage management etc.
 Then kubeadm came, and I was like "this is it! I can get started with a k8s that easy". I tried it out quite early and quickly learned some limitations, as well as the fact the resulting cluster wasn't able to boot up properly after a reboot (until 1.5.0).
 
