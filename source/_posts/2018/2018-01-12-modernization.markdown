@@ -11,13 +11,13 @@ categories:
 
 ## Hello 2018!
 
-I had a long break since my [last article](/2017/03/26/kubernetes-private-cloud-deployments-comparison/). So it's time to say hello here and announce some little things.
+I had a long break since my [last article](/blog/2017/03/26/kubernetes-private-cloud-deployments-comparison/). So it's time to say hello here and announce some little things.
 
 ## Blog modernization
 
 I was thinking of migrating to [Hugo](http://gohugo.io/) for some while, but end up with staying on octopress. The main reason is that I actually don't want a big change on how my blog looks and feels. Especially I'm interested in all the paths, which are already deep inside Google's index.
 
-The main feature is, that I learned there is a `<!-- more -->` separator, which makes my new index page doesn't look like a mile of full blog articles one after each other. A bit of coloring, a new [About Me](/about) page and some automation for my blog deploy process.
+The main feature is, that I learned to use the `<!-- more -->` separator, which makes my new index page doesn't look like a mile of full blog articles one after each other. A bit of coloring, a new [About Me](/about) page and some automation for my blog deploy process. Everything bundled in a [little repo](https://github.com/xetys/stytex.de) :)
 
 ## Upcoming topics
 
