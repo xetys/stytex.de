@@ -37,7 +37,7 @@ I've made a short asciinema clip of the entire installation.
 In a shell run:
 
 ```
-$ wget https://github.com/xetys/hetzner-kube/releases/download/0.0.1/hetzner-kube
+$ wget https://github.com/xetys/hetzner-kube/releases/download/0.0.3/hetzner-kube
 $ chmod a+x ./hetzner-kube
 $ sudo mv ./hetzner-kube /usr/local/bin
 ```
@@ -45,7 +45,7 @@ $ sudo mv ./hetzner-kube /usr/local/bin
 In [Hetzner Cloud Console][] create a new project "demo" and add an API token "demo". Copy the token and run:
 
 ```
-$ hetzner-kube context create demo
+$ hetzner-kube context add demo
 Token: <PASTE TOKEN HERE>
 ```
 
