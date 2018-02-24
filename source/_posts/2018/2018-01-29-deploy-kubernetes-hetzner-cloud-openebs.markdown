@@ -69,16 +69,11 @@ This will create two servers of type CX11 in your account. So playing with this 
 
 ## Access kubectl commands
 
-In order to do anything with the cluster, you'll need to ssh to the master to get access to kubectl command:
+In order to do anything with the cluster, you'll need to ssh to the master to get access to kubectl command or setup your local kubectl with the cluster kubeconfig using:
 
 ```
-$ hetzner-kube cluster list
-NAME	NODES	MASTER IP
-demo	2	195.201.xx.xxx
-$ ssh root@195.201.xx.xxx
+$ hetzner-kube cluster kubeconfig --name demo
 ```
-
-Then, you can continue the tutorial.
 
 ## Deploying OpenEBS
 
