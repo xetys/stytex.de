@@ -67,6 +67,19 @@ $ hetzner-kube cluster create --name demo --ssh-key demo
 
 This will create two servers of type CX11 in your account. So playing with this cluster will cost 0,01 EUR per hour (referring to current prices).
 
+## Access kubectl commands
+
+In order to do anything with the cluster, you'll need to ssh to the master to get access to kubectl command:
+
+```
+$ hetzner-kube cluster list
+NAME	NODES	MASTER IP
+demo	2	195.201.xx.xxx
+$ ssh root@195.201.xx.xxx
+```
+
+Then, you can continue the tutorial.
+
 ## Deploying OpenEBS
 
 OpenEBS is a container native storage provider, which supports dynamic storage provisioning, which allows creating persistent volume claims to be automatically bound by created persistent volumes. On Hetzner Cloud, the installation is straight-forward:
