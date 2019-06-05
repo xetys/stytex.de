@@ -18,4 +18,4 @@ With this in hand, I've got insights into today's problems around topics like de
 
 My current research and self-learning focus is on Kubernetes.
 
-Here is my [CV](/assets/david-steiman-cv.pdf)
+Here is my [CV](/assets/david-steiman-cv2.pdf)
